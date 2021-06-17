@@ -15,8 +15,26 @@ import torch
 from torch import optim
 
 class Trainer:
+    '''
+    Module for training a generative neural model
+    '''
     def __init__(self, model, trainloader, devdata, optimizer, epochs, \
         batch_status, device, write_path, early_stop=5, verbose=True, language='english'):
+        '''
+        params:
+        ---
+            model: model to be trained
+            trainloader: training data
+            devdata: dev data
+            optimizer
+            epochs: number of epochs
+            batch_status: update the loss after each 'batch_status' updates
+            device: cpu or gpy
+            write_path: folder to save best model
+            early_stop
+            verbose
+            language
+        '''
         self.model = model
         self.optimizer = optimizer
         self.epochs = epochs
@@ -32,6 +50,9 @@ class Trainer:
             os.mkdir(write_path)
     
     def train(self):
+        '''
+        Train model based on the parameters specified in __init__ function
+        '''
         max_bleu, repeat = 0, 0
         for epoch in range(self.epochs):
             self.model.model.train()
@@ -59,9 +80,9 @@ class Trainer:
             
             bleu, acc = self.evaluate()
             print('BLEU: ', bleu, 'Accuracy: ', acc)
-            if acc > max_bleu:
+            if bleu > max_bleu:
                 self.model.model.save_pretrained(os.path.join(self.write_path, 'model'))
-                max_bleu = acc
+                max_bleu = bleu
                 repeat = 0
                 print('Saving best model...')
             else:
@@ -71,6 +92,9 @@ class Trainer:
                 break
     
     def evaluate(self):
+        '''
+        Evaluating the model in devset after each epoch
+        '''
         self.model.model.eval()
         results = {}
         for batch_idx, inp in enumerate(self.devdata):
@@ -138,19 +162,19 @@ def load_data(src_fname, trg_fname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("tokenizer", help="path to the tokenizer")
-    parser.add_argument("model", help="path to the model")
-    parser.add_argument("src_train", help="path to the source train data")
-    parser.add_argument("trg_train", help="path to the target train data")
-    parser.add_argument("src_dev", help="path to the source dev data")
-    parser.add_argument("trg_dev", help="path to the target dev data")
-    parser.add_argument("epochs", help="number of epochs", type=int)
-    parser.add_argument("learning_rate", help="learning rate", type=float)
-    parser.add_argument("train_batch_size", help="batch size of training", type=int)
-    parser.add_argument("early_stop", help="earling stop", type=int)
-    parser.add_argument("max_length", help="maximum length to be processed by the network", type=int)
-    parser.add_argument("write_path", help="path to write best model")
-    parser.add_argument("language", help="language")
+    parser.add_argument("--tokenizer", help="path to the tokenizer", required=True)
+    parser.add_argument("--model", help="path to the model", required=True)
+    parser.add_argument("--src_train", help="path to the source train data", required=True)
+    parser.add_argument("--trg_train", help="path to the target train data", required=True)
+    parser.add_argument("--src_dev", help="path to the source dev data", required=True)
+    parser.add_argument("--trg_dev", help="path to the target dev data", required=True)
+    parser.add_argument("--epochs", help="number of epochs", type=int, default=5)
+    parser.add_argument("--learning_rate", help="learning rate", type=float, default=1e-5)
+    parser.add_argument("--batch_size", help="batch size", type=int, default=16)
+    parser.add_argument("--early_stop", help="earling stop", type=int, default=3)
+    parser.add_argument("--max_length", help="maximum length to be processed by the network", type=int, default=180)
+    parser.add_argument("--write_path", help="path to write best model", required=True)
+    parser.add_argument("--language", help="language", default='english')
     parser.add_argument("--verbose", help="should display the loss?", action="store_true")
     parser.add_argument("--batch_status", help="display of loss", type=int)
     parser.add_argument("--cuda", help="use CUDA", action="store_true")
@@ -160,7 +184,7 @@ if __name__ == '__main__':
     # settings
     learning_rate = args.learning_rate
     epochs = args.epochs
-    train_batch_size = args.train_batch_size
+    batch_size = args.batch_size
     batch_status = args.batch_status
     early_stop =args.early_stop
     language = args.language
@@ -202,7 +226,7 @@ if __name__ == '__main__':
     trg_fname = args.trg_train
     data = load_data(src_fname, trg_fname)
     dataset = NewsDataset(data)
-    trainloader = DataLoader(dataset, batch_size=train_batch_size)
+    trainloader = DataLoader(dataset, batch_size=batch_size)
     
     # dev data
     src_fname = args.src_dev

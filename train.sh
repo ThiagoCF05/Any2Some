@@ -15,18 +15,19 @@ else
 fi
 
 # BART
-python3 train.py facebook/bart-large facebook/bart-large \
-                '../data/writer/train.err.tok' \
-                '../data/writer/train.cor.tok' \
-                '../data/writer/dev.err.tok' \
-                '../data/writer/dev.cor.tok' \
-                3 \
-                1e-5 \
-                8 \
-                2 \
-                128 \
-                logs/bart \
-                english \
+python3 train.py --tokenizer facebook/bart-large \
+                --model facebook/bart-large \
+                --src_train 'example/trainsrc.txt' \
+                --trg_train 'example/traintrg.txt' \
+                --src_dev 'example/devsrc.txt' \
+                --trg_dev 'example/devtrg.txt' \
+                --epochs 3 \
+                --learning_rate 1e-5 \
+                --batch_size 8 \
+                --early_stop 2 \
+                --max_length 180 \
+                --write_path bart \
+                --language portuguese \
                 --verbose \
                 --batch_status 128 \
                 --cuda

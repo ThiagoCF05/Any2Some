@@ -14,6 +14,17 @@ from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 
 class Inferencer:
     def __init__(self, model, testdata, batch_status, device, write_dir, verbose=True, language='portuguese'):
+        '''
+        params:
+        ---
+            model: model to be trained
+            test: test data
+            batch_status: update the loss after each 'batch_status' updates
+            device: cpu or gpy
+            write_dir: folder to save results
+            verbose
+            language
+        '''
         self.model = model
         self.batch_status = batch_status
         self.device = device
@@ -97,14 +108,14 @@ def load_data(src_fname, trg_fname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("tokenizer", help="path to the tokenizer")
-    parser.add_argument("model", help="path to the model")
-    parser.add_argument("src_test", help="path to the source dev data")
-    parser.add_argument("trg_test", help="path to the target dev data")
-    parser.add_argument("batch_size", help="batch size of test", type=int)
-    parser.add_argument("max_length", help="maximum length to be processed by the network", type=int)
-    parser.add_argument("write_dir", help="path to write results")
-    parser.add_argument("language", help="language")
+    parser.add_argument("--tokenizer", help="path to the tokenizer", required=True)
+    parser.add_argument("--model", help="path to the model", required=True)
+    parser.add_argument("--src_test", help="path to the source dev data", required=True)
+    parser.add_argument("--trg_test", help="path to the target dev data", required=True)
+    parser.add_argument("--batch_size", help="batch size of test", type=int, default=16)
+    parser.add_argument("--max_length", help="maximum length to be processed by the network", type=int, default=180)
+    parser.add_argument("--write_dir", help="path to write results", required=True)
+    parser.add_argument("--language", help="language", default='english')
     parser.add_argument("--verbose", help="should display the loss?", action="store_true")
     parser.add_argument("--batch_status", help="display of loss", type=int)
     parser.add_argument("--cuda", help="use CUDA", action="store_true")
@@ -152,7 +163,7 @@ if __name__ == '__main__':
     # test data
     src_fname = args.src_test
     trg_fname = args.trg_test
-    devdata = load_data(src_fname, trg_fname)
+    testdata = load_data(src_fname, trg_fname)
 
     inf = Inferencer(generator, testdata, batch_status, device, write_dir, verbose, language)
     inf.evaluate()
