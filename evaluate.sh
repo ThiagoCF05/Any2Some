@@ -7,7 +7,7 @@ fi
 
 # webnlg
 python3 evaluate.py --tokenizer facebook/bart-large \
-                --model bart \
+                --model bart/model \
                 --src_test 'example/testsrc.txt' \
                 --trg_test 'example/testtrg.txt' \
                 --batch_size 4 \

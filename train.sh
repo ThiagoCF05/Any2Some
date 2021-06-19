@@ -1,15 +1,8 @@
-if [ ! -d "logs" ];
-then
-  mkdir logs
-fi
-
 if [ ! -d "env" ];
 then
   virtualenv env
   . env/bin/activate
-  pip3 install torch
-  pip3 install transformers
-  pip3 install nltk
+  pip3 install -r requirements.txt
 else
   . env/bin/activate
 fi
@@ -29,5 +22,5 @@ python3 train.py --tokenizer facebook/bart-large \
                 --write_path bart \
                 --language portuguese \
                 --verbose \
-                --batch_status 128 \
+                --batch_status 16 \
                 --cuda
