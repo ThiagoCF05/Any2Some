@@ -5,7 +5,6 @@ then
   mkdir results
 fi
 
-# webnlg
 python3 evaluate.py --tokenizer facebook/bart-large \
                 --model bart/model \
                 --src_test 'example/testsrc.txt' \
