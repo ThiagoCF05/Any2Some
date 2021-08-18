@@ -1,6 +1,6 @@
-# Data2Text
+# Any2Some
 
-This is a framework that aims to simply the development of neural, end-to-end, data-to-text systems.
+This is a framework that aims to simplify the development of neural, end-to-end, data-to-text systems.
 
 # Supported Models
 
