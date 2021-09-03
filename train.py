@@ -6,6 +6,7 @@ from models.bert import BERTGen
 from models.gportuguesegen import GPorTugueseGen
 from models.t5gen import T5Gen
 from models.gpt2 import GPT2
+from models.blenderbot import Blenderbot
 from torch.utils.data import DataLoader, Dataset
 import nltk
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
@@ -218,6 +219,8 @@ if __name__ == '__main__':
         generator = GPorTugueseGen(tokenizer_path, model_path, max_length, device)
     elif tokenizer_path == 'gpt2':
         generator = GPT2(tokenizer_path, model_path, max_length, device)
+    elif 'blenderbot' in tokenizer_path:
+        generator = Blenderbot(tokenizer_path, model_path, max_length, device)
     else:
         raise Exception("Invalid model") 
 
