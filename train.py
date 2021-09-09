@@ -1,5 +1,6 @@
 __author__='thiagocastroferreira'
 
+import json
 import argparse
 from models.bartgen import BARTGen
 from models.bert import BERTGen
@@ -80,17 +81,27 @@ class Trainer:
                         float(loss), round(sum(losses) / len(losses), 5)))
             
             bleu, acc = self.evaluate()
+            checkpoint = { 'epoch': epoch+1, 'bleu': bleu, 'acc': acc, 'best_model': False }
             print('BLEU: ', bleu, 'Accuracy: ', acc)
             if bleu > max_bleu:
                 self.model.model.save_pretrained(os.path.join(self.write_path, 'model'))
                 max_bleu = bleu
                 repeat = 0
+                checkpoint['best_model'] = True
                 print('Saving best model...')
             else:
                 repeat += 1
             
             if repeat == self.early_stop:
                 break
+            
+            # saving checkpoint
+            if os.path.exists(f"{self.write_path}/checkpoint.json"):
+                checkpoints = json.load(open(f"{self.write_path}/checkpoint.json"))
+                checkpoints['checkpoints'].append(checkpoint)
+            else:
+                checkpoints = { 'checkpoints': [checkpoint] }
+            json.dump(checkpoints, open(f"{self.write_path}/checkpoint.json", 'w'), separators=(',', ':'), sort_keys=True, indent=4)
     
     def evaluate(self):
         '''
