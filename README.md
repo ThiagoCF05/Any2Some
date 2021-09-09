@@ -12,6 +12,7 @@ The framework supported the following models:
 2. [BART](https://huggingface.co/transformers/model_doc/bart.html)
 3. [T5](https://huggingface.co/transformers/model_doc/t5.html)
 4. [GPT-2](https://huggingface.co/transformers/model_doc/gpt2.html)
+5. [Blenderbot](https://huggingface.co/transformers/model_doc/blenderbot.html)
 
 ### Multilingual
 
